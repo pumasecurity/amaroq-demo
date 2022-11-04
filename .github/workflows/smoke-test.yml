@@ -19,6 +19,13 @@ on:
               description: "Target file (optional)"
               default: "Coyote.csproj"
               required: false
+permissions:
+  id-token: write # write jwt token
+  actions: read # read gh actions
+  contents: read # read access to the repo
+  checks: write # unit test results
+  security-events: write # write access to advanced security
+
 jobs:
   build:
     name: Run Tools and Differential Analysis    
@@ -127,28 +134,11 @@ jobs:
 
             if test -f "$previous_scan_result"; then
               echo "$previous_scan_result exists."              
-              docker run -v ${{ env.PREV_SCAN_DIRECTORY }}:/prev-scan-results -v ${{ env.SCAN_DIRECTORY }}:/scan-results -v ${{ env.ARTIFACT_DIRECTORY }}:/artifacts public.ecr.aws/pumasecurity/amaroq:latest amaroq --tool $tool --previous /prev-scan-results/${scan_result} --current /scan-results/${scan_result} --output-directory /artifacts --output-filename ${scan_result}
+              echo "docker run -v ${{ env.PREV_SCAN_DIRECTORY }}:/prev-scan-results -v ${{ env.SCAN_DIRECTORY }}:/scan-results -v ${{ env.ARTIFACT_DIRECTORY }}:/artifacts public.ecr.aws/pumasecurity/amaroq:latest amaroq --tool $tool --previous /prev-scan-results/${scan_result_no_ext}.sarif --current /scan-results/${scan_result} --output-directory /artifacts --output-filename ${scan_result_no_ext}.sarif"
+              docker run -v ${{ env.PREV_SCAN_DIRECTORY }}:/prev-scan-results -v ${{ env.SCAN_DIRECTORY }}:/scan-results -v ${{ env.ARTIFACT_DIRECTORY }}:/artifacts public.ecr.aws/pumasecurity/amaroq:latest amaroq --tool $tool --previous /prev-scan-results/${scan_result_no_ext}.sarif --current /scan-results/${scan_result} --output-directory /artifacts --output-filename ${scan_result_no_ext}.sarif
             else
               echo "$previous_scan_result does not exists."         
-              docker run -v ${{ env.SCAN_DIRECTORY }}:/scan-results -v ${{ env.ARTIFACT_DIRECTORY }}:/artifacts public.ecr.aws/pumasecurity/amaroq:latest amaroq --tool $tool --current /scan-results/${scan_result} --output-directory /artifacts --output-filename ${scan_result}
+              echo "docker run -v ${{ env.SCAN_DIRECTORY }}:/scan-results -v ${{ env.ARTIFACT_DIRECTORY }}:/artifacts public.ecr.aws/pumasecurity/amaroq:latest amaroq --tool $tool --current /scan-results/${scan_result} --output-directory /artifacts --output-filename ${scan_result_no_ext}.sarif"
+              docker run -v ${{ env.SCAN_DIRECTORY }}:/scan-results -v ${{ env.ARTIFACT_DIRECTORY }}:/artifacts public.ecr.aws/pumasecurity/amaroq:latest amaroq --tool $tool --current /scan-results/${scan_result} --output-directory /artifacts --output-filename ${scan_result_no_ext}.sarif
             fi                
           done                 
-
-      - name: Publish Sarif Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: scan-results
-          path: ${{ env.ARTIFACT_DIRECTORY }}/*.sarif          
-
-      - name: Publish Logs
-        uses: actions/upload-artifact@v3
-        with:
-          name: logs
-          path: ${{ env.ARTIFACT_DIRECTORY }}/*.log
-
-      - name: Publish Summaries
-        uses: actions/upload-artifact@v3
-        with:
-          name: summaries
-          path: ${{ env.ARTIFACT_DIRECTORY }}/*.json
-
