@@ -1,4 +1,4 @@
-name: Run Puma Amaroq - Code
+name: Scan Edenred Payments
 
 on:
     workflow_dispatch:

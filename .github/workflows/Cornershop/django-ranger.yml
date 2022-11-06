@@ -1,4 +1,4 @@
-name: Run Puma Amaroq - Code
+name: Scan Django-Ranger
 
 on:
     workflow_dispatch:

@@ -1,11 +1,11 @@
-name: Run Puma Amaroq - Code
+name: Scan Oneclick
 
 on:
     workflow_dispatch:
       inputs:
             target:
               description: "Target repository to scan"
-              default: "cornershop/python-edenred-payments"
+              default: "cornershop/python-oneclick"
               required: true
             target-branch: 
               description: "Target branch (optional)"
