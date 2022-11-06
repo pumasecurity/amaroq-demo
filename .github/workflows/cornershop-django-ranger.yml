@@ -9,7 +9,7 @@ on:
               required: true
             target-branch: 
               description: "Target branch (optional)"
-              default: "main"
+              default: "master"
               required: false
             target-directory:
               description: "Target directory"
