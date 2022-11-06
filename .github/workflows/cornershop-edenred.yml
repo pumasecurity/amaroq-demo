@@ -13,7 +13,7 @@ on:
               required: false
             target-directory:
               description: "Target directory"
-              default: "./"
+              default: ""
               required: true
             target-file: 
               description: "Target file (optional)"
