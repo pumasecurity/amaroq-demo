@@ -17,7 +17,7 @@ on:
               required: true
             target-file: 
               description: "Target file (optional)"
-              default: "Coyote.csproj"
+              default: ""
               required: false
 permissions:
   id-token: write # write jwt token
